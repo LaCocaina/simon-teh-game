@@ -25,6 +25,11 @@
         </div>
         <div v-else>
           <button @click="start">{{ gameStarted ? 'Restart' : 'Start' }}</button>
+          <select :selected="diff" v-model="diff" :disabled="gameStarted">
+            <option value="0">Лёгк.</option>
+            <option value="1">Сред.</option>
+            <option value="2">Слож.</option>
+          </select>
           <button @click="demo">Demo</button>
           Round: {{ round }} <span v-if="over">Game Over!</span>
         </div>
@@ -36,8 +41,11 @@
 <script>
   import * as Tone from "tone";
 
-  export default {
+  const delay = t => {
+    return new Promise(resolve => setTimeout(resolve, t));
+  }
 
+  export default {
     name: 'App',
     components: {
     },
@@ -56,17 +64,19 @@
           { color: "yellow", status: false, key: "E" },
           { color: "blue", status: false, key: "F" },
         ],
-        delayTime: 1000,
+        delayTime: [
+                1500,
+                1000,
+                400
+        ],
         over: false,
+        diff: 0,
       }
     },
     methods: {
       agreed() {
         this.agree = true;
         Tone.start();
-      },
-      delay(t) {
-        return new Promise(resolve => setTimeout(resolve, t));
       },
       playNote(n) {
         this.synth.triggerAttackRelease(`${this.lights[n].key}4`, "8n");
@@ -96,7 +106,7 @@
           for (let [i, light] of this.lights.entries()) {
             this.playNote(i);
             light.status = true;
-            await this.delay(this.delayTime);
+            await delay(this.delayTime[this.diff]);
             light.status = false;
           }
           this.lock = false;
@@ -113,19 +123,19 @@
         this.round = this.steps.length;
         this.playNote(this.steps[0]);
         this.lights[this.steps[0]].status = true;
-        await this.delay(this.delayTime);
+        await delay(this.delayTime[this.diff]);
         this.lights[this.steps[0]].status = false;
       },
       async continue() {
         this.playerSteps = [];
-        await this.delay(this.delayTime);
+        await delay(this.delayTime[this.diff]);
         this.addStep();
         this.round = this.steps.length;
         this.lock = true;
         for (const step of this.steps) {
           this.playNote(step);
           this.lights[step].status = true;
-          await this.delay(this.delayTime);
+          await delay(this.delayTime[this.diff]);
           this.lights[step].status = false;
         }
         this.lock = false;
