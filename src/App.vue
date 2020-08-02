@@ -26,9 +26,9 @@
         <div v-else>
           <button @click="start">{{ gameStarted ? 'Restart' : 'Start' }}</button>
           <select :selected="diff" v-model="diff" :disabled="gameStarted">
-            <option value="0">Лёгк.</option>
-            <option value="1">Сред.</option>
-            <option value="2">Слож.</option>
+            <option value="0">Easy</option>
+            <option value="1">Normal</option>
+            <option value="2">Hard</option>
           </select>
           <button @click="demo">Demo</button>
           Round: {{ round }} <span v-if="over">Game Over!</span>
@@ -70,7 +70,7 @@
                 400
         ],
         over: false,
-        diff: 0,
+        diff: 1,
       }
     },
     methods: {
