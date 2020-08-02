@@ -82,7 +82,7 @@
         this.synth.triggerAttackRelease(`${this.lights[n].key}4`, "8n");
       },
       makeMove(m) {
-        if (!this.agree || this.lock) {
+        if (!this.agree || this.lock || this.over) {
           return;
         }
           this.playNote(m);
